@@ -1,5 +1,7 @@
 import { slurp, to2dIsometric } from "./util";
 
+import { renderBoundingCube } from "./render-cube";
+
 export default class Controller {
 
 	constructor() {
@@ -53,10 +55,14 @@ function drawShape(context, shapeX, shapeY, size, animAmt) {
 	context.lineWidth = 2;
 	context.lineCap = 'round';
 	context.lineJoin = 'round';
+	context.setTransform();
+	context.translate(shapeX, shapeY);
 	
 	const numPoints = 24;
-	const loopAnimAmt = 0.5 * Math.sin(2 * Math.PI * animAmt) + 0.5;
-	const yAngle = slurp(0, Math.PI / 2, loopAnimAmt);
+	// const loopAnimAmt = 0.5 * Math.sin(2 * Math.PI * animAmt) + 0.5;
+	// const yAngle = slurp(0, Math.PI / 2, loopAnimAmt);
+	const yAngle = Math.PI / 3;
+	const xzAngle = 2 * Math.PI * animAmt;
 	
 	context.beginPath();
 	for (let i = 0; i <= numPoints; i ++) {
@@ -64,12 +70,12 @@ function drawShape(context, shapeX, shapeY, size, animAmt) {
 		const x = size * Math.cos(2 * Math.PI * amt);
 		const y = x;
 		const z = size * Math.sin(2 * Math.PI * amt);
-		const point = to2dIsometric(x, y, z, yAngle, 0);
+		const point = to2dIsometric(x, y, z, xzAngle, yAngle);
 		if (i == 0) {
-			context.moveTo(shapeX + point.x, shapeY + point.y);
+			context.moveTo(point.x, point.y);
 		}
 		else {
-			context.lineTo(shapeX + point.x, shapeY + point.y);
+			context.lineTo(point.x, point.y);
 		}
 	}
 	context.stroke();
@@ -80,13 +86,23 @@ function drawShape(context, shapeX, shapeY, size, animAmt) {
 		const x = size * Math.cos(2 * Math.PI * amt);
 		const y = -x;
 		const z = size * Math.sin(2 * Math.PI * amt);
-		const point = to2dIsometric(x, y, z, 0, yAngle);
+		const point = to2dIsometric(x, y, z, xzAngle, yAngle);
 		if (i == 0) {
-			context.moveTo(shapeX + point.x, shapeY + point.y);
+			context.moveTo(point.x, shapeY + point.y);
 		}
 		else {
 			context.lineTo(shapeX + point.x, shapeY + point.y);
 		}
 	}
 	context.stroke();
+
+	context.lineWidth = 1;
+	context.translate
+	renderBoundingCube(
+		context,
+		-size, size,
+		-size, size,
+		-size, size,
+		xzAngle, yAngle
+	)
 }
