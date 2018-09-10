@@ -9,7 +9,7 @@ export default class Controller {
 	}
 
 	update(dt) {
-		const period = 2;
+		const period = 4;
 		this.animAmt += dt / period;
 		this.animAmt %= 1;
 	}
@@ -55,14 +55,13 @@ function drawShape(context, shapeX, shapeY, size, animAmt) {
 	context.lineWidth = 2;
 	context.lineCap = 'round';
 	context.lineJoin = 'round';
-	context.setTransform();
 	context.translate(shapeX, shapeY);
 	
 	const numPoints = 24;
-	// const loopAnimAmt = 0.5 * Math.sin(2 * Math.PI * animAmt) + 0.5;
-	// const yAngle = slurp(0, Math.PI / 2, loopAnimAmt);
-	const yAngle = Math.PI / 3;
-	const xzAngle = 2 * Math.PI * animAmt;
+	const loopAnimAmt = 0.5 * Math.sin(2 * Math.PI * animAmt) + 0.5;
+	const yAngle = slurp(0.05, 0.45, loopAnimAmt) * Math.PI;
+	// const yAngle = Math.PI / 3;
+	const xzAngle = 0.05 * Math.PI;//0;//2 * Math.PI * animAmt;
 	
 	context.beginPath();
 	for (let i = 0; i <= numPoints; i ++) {
@@ -88,21 +87,21 @@ function drawShape(context, shapeX, shapeY, size, animAmt) {
 		const z = size * Math.sin(2 * Math.PI * amt);
 		const point = to2dIsometric(x, y, z, xzAngle, yAngle);
 		if (i == 0) {
-			context.moveTo(point.x, shapeY + point.y);
+			context.moveTo(point.x, point.y);
 		}
 		else {
-			context.lineTo(shapeX + point.x, shapeY + point.y);
+			context.lineTo(point.x, point.y);
 		}
 	}
 	context.stroke();
 
 	context.lineWidth = 1;
-	context.translate
 	renderBoundingCube(
 		context,
 		-size, size,
 		-size, size,
 		-size, size,
 		xzAngle, yAngle
-	)
+	);
+	context.translate(-shapeX, -shapeY);
 }
